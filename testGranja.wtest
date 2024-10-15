@@ -1,9 +1,89 @@
-import example.pepita
+import aspersores_mercados.*
+import wollok.game.*
+import hector.*
+import cultivos.*
+import direcciones.*
+import granja.*
+import aspersores_mercados.*
 
-describe "group of tests for pepita" {
 
-  test "pepita has initial energy" {
-    assert.equals(100, pepita.energy())
+
+
+describe "Siembras" {
+
+  test "Sembrar maiz, trigo y tomaco" {
+    
+    hector.position(game.at(3,3))
+    hector.sembrarMaiz()
+    assert.equals(granja.plantas().size(), 1)
+    hector.position(game.at(3,4))
+    hector.sembrarTrigo()
+    assert.equals(granja.plantas().size(), 2)
+    hector.position(game.at(3,5))
+    hector.sembrarTomaco()
+    assert.equals(granja.plantas().size(), 3)
   }
 
+  test "regar" {
+
+    hector.position(game.at(1,1))
+    hector.sembrarMaiz()
+    hector.regar(hector.position())
+    assert.equals(granja.plantaEn(hector.position()).uniqueElement().estado(), maizAdulto)
+    hector.position(game.at(1,2))
+    hector.sembrarTrigo()
+    hector.regar(hector.position())
+    assert.equals(granja.plantaEn(hector.position()).uniqueElement().etapaEvolucion(), 1)
+    hector.position(game.at(1,3))
+    hector.sembrarTomaco()
+    hector.regar(hector.position())
+    hector.position(game.at(1,4)) //el tomaco se mueve uno para arriba cuando crece
+    assert.equals(granja.plantaEn(hector.position()).uniqueElement().estado(), tomacoAdulto)
+  }
+
+  test "cosechar" {
+
+    hector.position(game.at(1,1))
+    assert.throwsException({ hector.cosechar(hector.position()) })
+    hector.sembrarMaiz()
+    hector.regar(hector.position())
+    assert.equals(hector.plantasParaVenta().size(), 0)
+    hector.cosechar(hector.position())
+    assert.equals(hector.plantasParaVenta().size(), 1)
+
+
+    hector.position(game.at(1,2))
+    hector.sembrarTrigo()
+    hector.regar(hector.position())
+    hector.regar(hector.position())
+    hector.cosechar(hector.position())
+    assert.equals(hector.plantasParaVenta().size(), 2)
+
+    hector.position(game.at(1,3))
+    hector.sembrarTomaco()
+    hector.regar(hector.position())
+    hector.position(game.at(1,4)) //el tomaco se mueve uno para arriba cuando crece
+    hector.cosechar(hector.position())
+    assert.equals(hector.plantasParaVenta().size(), 3)
+
+  }
+}
+
+describe "Ventas" {
+  test "Hector vende plantas" {
+
+    hector.position(game.at(1,1))
+    hector.sembrarMaiz()
+    hector.regar(hector.position())
+    hector.cosechar(hector.position())
+    hector.sembrarTrigo()
+    hector.regar(hector.position())
+    hector.regar(hector.position())
+    hector.cosechar(hector.position())
+    assert.equals(hector.plantasParaVenta().size(), 2)
+    assert.equals(hector.plataEnLaBilletera(), 0)
+    hector.vender()
+    assert.equals(hector.plantasParaVenta().size(), 0)
+    assert.equals(hector.plataEnLaBilletera(), 500)
+  }
 }
