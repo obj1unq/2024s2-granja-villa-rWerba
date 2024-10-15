@@ -1,6 +1,11 @@
+import aspersores_mercados.*
 import wollok.game.*
 import hector.*
 import cultivos.*
+import direcciones.*
+import granja.*
+
+
 
 program farmville {
 	//  CONFIG	
@@ -11,8 +16,33 @@ program farmville {
 
 	//  VISUALES
  	game.addVisualCharacter(hector)
- 	game.addVisual(new Maiz()) // Se agrega a modo de prueba
- 	
+ 	 // Se agrega a modo de prueba
+
+	//HECTOR
+	keyboard.w().onPressDo({hector.mover(arriba)})
+	keyboard.s().onPressDo({hector.mover(abajo)})
+	keyboard.a().onPressDo({hector.mover(izquierda)})
+	keyboard.d().onPressDo({hector.mover(derecha)})
+	keyboard.m().onPressDo({hector.sembrarMaiz()})
+	keyboard.t().onPressDo({hector.sembrarTrigo()})
+	keyboard.o().onPressDo({hector.sembrarTomaco()})
+	keyboard.r().onPressDo({hector.regar(hector.position())})
+	keyboard.c().onPressDo({hector.cosechar(hector.position())})
+	keyboard.v().onPressDo({hector.venderPlantas()})
+	keyboard.space().onPressDo({hector.decirInformacion()})
+	keyboard.q().onPressDo({hector.ponerAspersor()})
+
+	//Mercados
+	const mercado = new Mercado(position = game.at((game.height() -1), (game.width() -1)), monedas = 100)
+	game.addVisual(mercado)
+	granja.agregarMercado(mercado)
+	const merca2 = new Mercado(position = game.center(), monedas = 1)
+	game.addVisual(merca2)
+	granja.agregarMercado(merca2)
+	const merca3 = new Mercado(position = game.origin(), monedas = 1000000)
+	game.addVisual(merca3)
+	granja.agregarMercado(merca3)
+
  	//  COMIENZA
 	game.start()
 }
